@@ -1,23 +1,41 @@
 #import <UIKit/UIKit.h>
+#import <objc/runtime.h>
 
-// 定义开关的key
-#define kHideHeadImageKey @"HideHeadImageSwitch"
+// 声明外部类和方法
+@interface WCPluginsMgr : NSObject
++ (instancetype)sharedInstance;
+- (void)registerSwitchWithTitle:(NSString *)title key:(NSString *)key;
+@end
 
 %hook CommonMessageViewModel
+
 - (BOOL)isShowHeadImage {
-    // 检查开关状态，如果开启则返回NO（不显示头像）
-    BOOL hideHeadImage = [[NSUserDefaults standardUserDefaults] boolForKey:kHideHeadImageKey];
-    if (hideHeadImage) {
-        return NO;
+    // 检查开关状态，默认返回 NO（不显示头像）
+    BOOL isEnabled = NO;
+    
+    // 如果有插件管理器，读取开关状态
+    Class pluginsMgrClass = objc_getClass("WCPluginsMgr");
+    if (pluginsMgrClass) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        isEnabled = [defaults boolForKey:@"HideMessageHeadImage_Enabled"];
     }
-    return %orig; // 如果开关关闭，则执行原始逻辑
+    
+    // 如果开关开启，返回 NO（隐藏头像）；如果开关关闭，返回原值
+    if (isEnabled) {
+        return NO;
+    } else {
+        return %orig;
+    }
 }
+
 %end
 
 // 插件初始化
-%ctor {
-    // 注册到插件管理
-    if (NSClassFromString(@"WCPluginsMgr")) {
-        [[objc_getClass("WCPluginsMgr") sharedInstance] registerSwitchWithTitle:@"隐藏聊天头像" key:kHideHeadImageKey];
-    }
+__attribute__((constructor)) static void constructor() {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (NSClassFromString(@"WCPluginsMgr")) {
+            // 注册一个开关，用于控制是否隐藏消息头像
+            [[objc_getClass("WCPluginsMgr") sharedInstance] registerSwitchWithTitle:@"隐藏消息头像" key:@"HideMessageHeadImage_Enabled"];
+        }
+    });
 }
