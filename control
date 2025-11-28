@@ -6,4 +6,4 @@ Depends: mobilesubstrate, firmware (>= 14.0)
 Description: 隐藏微信聊天头像
 Author: chen
 Maintainer: chen
-Section: chen-Tweaks
+Section: Tweaks
