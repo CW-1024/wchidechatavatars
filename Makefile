@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = tx
 
-WCHideChatAvatars_FILES = Tweak.x
-WCHideChatAvatars_CFLAGS = -fobjc-arc
+tx_FILES = Tweak.x
+tx_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
