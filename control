@@ -1,9 +1,9 @@
-Package: com.netskao.wchidechatavatars
+Package: com.chen.tx
 Name: WCHideChatAvatars
 Version: 1.1-1
 Architecture: iphoneos-arm
 Depends: mobilesubstrate, firmware (>= 14.0)
-Description: WeChat Hide Chat Avatars
-Author: Netskao
-Maintainer: Nets
-Section: Netskao-Tweaks
+Description: 隐藏微信聊天头像
+Author: chen
+Maintainer: chen
+Section: chen-Tweaks
